@@ -138,8 +138,6 @@ fn rot2(x: u8) -> u8 {
 
 #[cfg(test)]
 mod tests {
-    use rand::SeedableRng;
-
     use super::*;
 
     #[test]
@@ -176,6 +174,7 @@ mod tests {
         const BLOCK_COUNT: usize = 1000;
 
         use rand::Rng;
+        use rand::SeedableRng;
 
         let mut rng = rand::rngs::StdRng::seed_from_u64(0);
         for _ in 0..KEY_COUNT {
