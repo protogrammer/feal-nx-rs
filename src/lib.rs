@@ -173,8 +173,7 @@ mod tests {
         const KEY_COUNT: usize = 1000;
         const BLOCK_COUNT: usize = 1000;
 
-        use rand::Rng;
-        use rand::SeedableRng;
+        use rand::{Rng, SeedableRng};
 
         let mut rng = rand::rngs::StdRng::seed_from_u64(0);
         for _ in 0..KEY_COUNT {
