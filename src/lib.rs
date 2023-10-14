@@ -178,8 +178,8 @@ mod tests {
 
         let mut rng = rand::rngs::StdRng::seed_from_u64(0);
         for _ in 0..KEY_COUNT {
-            let key: u128 = rng.gen();
-            let cipher = FealNx::new(&key.to_be_bytes());
+            let key: [u8; 16] = rng.gen();
+            let cipher = FealNx::new(&key);
             for _ in 0..BLOCK_COUNT {
                 let plaintext: u64 = rng.gen();
                 let encrypted = cipher.encrypt(plaintext);
