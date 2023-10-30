@@ -83,44 +83,34 @@ fn f(alpha: u32, beta: u16) -> u32 {
     let a = alpha.to_be_bytes();
     let b = beta.to_be_bytes();
 
-    let mut f: [MaybeUninit<u8>; 4] = unsafe { MaybeUninit::uninit().assume_init() };
+    let mut f: [u8; 4] = [0; 4];
 
-    f[1].write(a[1] ^ b[0]);
-    f[2].write(a[2] ^ b[1]);
-    f[1].write(unsafe { f[1].assume_init() } ^ a[0]);
-    f[2].write(unsafe { f[2].assume_init() } ^ a[3]);
-    f[1].write(s1(unsafe { f[1].assume_init() }, unsafe {
-        f[2].assume_init()
-    }));
-    f[2].write(s0(unsafe { f[2].assume_init() }, unsafe {
-        f[1].assume_init()
-    }));
-    f[0].write(s0(a[0], unsafe { f[1].assume_init() }));
-    f[3].write(s1(a[3], unsafe { f[2].assume_init() }));
+    f[1] = a[1] ^ b[0];
+    f[2] = a[2] ^ b[1];
+    f[1] = f[1] ^ a[0];
+    f[2] = f[2] ^ a[3];
+    f[1] = s1(f[1], f[2]);
+    f[2] = s0(f[2], f[1]);
+    f[0] = s0(a[0], f[1]);
+    f[3] = s1(a[3], f[2]);
 
-    u32::from_be_bytes(unsafe { transmute(f) })
+    u32::from_be_bytes(f)
 }
 
 fn fk(alpha: u32, beta: u32) -> u32 {
     let a = alpha.to_be_bytes();
     let b = beta.to_be_bytes();
 
-    let mut f: [MaybeUninit<u8>; 4] = unsafe { MaybeUninit::uninit().assume_init() };
+    let mut f: [u8; 4] = [0; 4];
 
-    f[1].write(a[1] ^ a[0]);
-    f[2].write(a[2] ^ a[3]);
-    f[1].write(s1(
-        unsafe { f[1].assume_init() },
-        unsafe { f[2].assume_init() } ^ b[0],
-    ));
-    f[2].write(s0(
-        unsafe { f[2].assume_init() },
-        unsafe { f[1].assume_init() } ^ b[1],
-    ));
-    f[0].write(s0(a[0], unsafe { f[1].assume_init() } ^ b[2]));
-    f[3].write(s1(a[3], unsafe { f[2].assume_init() } ^ b[3]));
+    f[1] = a[1] ^ a[0];
+    f[2] = a[2] ^ a[3];
+    f[1] = s1(f[1], f[2] ^ b[0]);
+    f[2] = s0(f[2], f[1] ^ b[1]);
+    f[0] = s0(a[0], f[1] ^ b[2]);
+    f[3] = s1(a[3], f[2] ^ b[3]);
 
-    u32::from_be_bytes(unsafe { transmute(f) })
+    u32::from_be_bytes(f)
 }
 
 fn s0(x1: u8, x2: u8) -> u8 {
